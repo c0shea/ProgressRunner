@@ -6,6 +6,19 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Connor O'Shea</Authors>
     <PackageProjectUrl>https://github.com/c0shea/ProgressRunner</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>Gear.png</PackageIcon>
+    <Description>Runs a collection of tasks with a status dialog to report the progress along the way</Description>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Gear.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
