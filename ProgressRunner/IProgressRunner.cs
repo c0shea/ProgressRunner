@@ -8,8 +8,8 @@ namespace ProgressRunner
         string Title { get; set; }
         bool IsRunning { get; }
 
-        void AddTask(RunnableTask task);
-        void AddTasks(IEnumerable<RunnableTask> tasks);
+        void AddTask(IRunnableTask task);
+        void AddTasks(IEnumerable<IRunnableTask> tasks);
         Task RunAsync();
     }
 }

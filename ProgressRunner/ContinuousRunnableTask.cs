@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Threading;
 
 namespace ProgressRunner
 {
-    public class RunnableTask : IRunnableTask
+    public class ContinuousRunnableTask : IRunnableTask
     {
         public string Name { get; }
-        public Action<IProgress<IterationStatus>, CancellationToken> Task { get; }
+        public Action Task { get; }
 
-        public RunnableTask(string name, Action<IProgress<IterationStatus>, CancellationToken> task)
+        public ContinuousRunnableTask(string name, Action task)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Task = task ?? throw new ArgumentNullException(nameof(task));

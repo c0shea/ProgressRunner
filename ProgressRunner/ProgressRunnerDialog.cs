@@ -10,7 +10,7 @@ namespace ProgressRunner
     public partial class ProgressRunnerDialog : Form, IProgressRunner
     {
         private readonly Form _parentForm;
-        private readonly List<RunnableTask> _tasks = new List<RunnableTask>();
+        private readonly List<IRunnableTask> _tasks = new List<IRunnableTask>();
         private CancellationTokenSource _cancellationTokenSource;
 
         public bool IsRunning { get; private set; }
@@ -28,14 +28,14 @@ namespace ProgressRunner
             CenterParent();
         }
 
-        public void AddTask(RunnableTask task)
+        public void AddTask(IRunnableTask task)
         {
             _tasks.Add(task);
             SetOverallMaximumValue();
             UpdateOverallCounter();
         }
 
-        public void AddTasks(IEnumerable<RunnableTask> tasks)
+        public void AddTasks(IEnumerable<IRunnableTask> tasks)
         {
             _tasks.AddRange(tasks);
             SetOverallMaximumValue();
@@ -77,7 +77,27 @@ namespace ProgressRunner
                 taskProgress.Value = 0;
                 taskProgress.Maximum = 0;
 
-                await Task.Run(() => task.Task(progress, cancellationToken), cancellationToken);
+                switch (task)
+                {
+                    case ContinuousRunnableTask continuousTask:
+                        taskProgress.Style = ProgressBarStyle.Marquee;
+                        taskProgress.Refresh();
+                        lblTaskCounter.Hide();
+                        lblTaskCounter.Refresh();
+                        await Task.Run(() => continuousTask.Task(), cancellationToken);
+                        break;
+
+                    case RunnableTask runnableTask:
+                        taskProgress.Style = ProgressBarStyle.Blocks;
+                        taskProgress.Refresh();
+                        lblTaskCounter.Show();
+                        lblTaskCounter.Refresh();
+                        await Task.Run(() => runnableTask.Task(progress, cancellationToken), cancellationToken);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(task));
+                }
 
                 overallProgress.PerformStep();
                 UpdateOverallCounter();
@@ -113,6 +133,11 @@ namespace ProgressRunner
         /// </summary>
         private void CenterParent()
         {
+            if (_parentForm == null)
+            {
+                return;
+            }
+
             Top = _parentForm.Top + (_parentForm.Height - Height) / 2;
             Left = _parentForm.Left + (_parentForm.Width - Width) / 2;
         }
